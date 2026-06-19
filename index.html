@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arif & Larasaty Wedding Social</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:#f4f4f4;
+}
+
+/* HEADER */
+.header{
+background:#000;
+color:#fff;
+text-align:center;
+padding:30px;
+font-family:'Cinzel',serif;
+letter-spacing:2px;
+}
+
+/* CONTAINER */
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+/* POST CARD */
+.post{
+background:#fff;
+padding:15px;
+margin-top:15px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+animation:fadeUp .3s ease;
+}
+
+/* INPUT */
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+/* BUTTON */
+.btn{
+background:gold;
+border:none;
+padding:10px 20px;
+border-radius:25px;
+cursor:pointer;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* LIKE */
+.like{
+cursor:pointer;
+color:#e74c3c;
+font-weight:bold;
+margin-top:10px;
+display:inline-block;
+}
+
+/* ANIMATION */
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+ARIF & LARASATY • WEDDING SOCIAL WALL
+</div>
+
+<div class="container">
+
+<!-- INPUT POST -->
+<div class="post">
+
+<input id="nama" placeholder="Nama Anda">
+<textarea id="pesan" placeholder="Tulis ucapan..."></textarea>
+
+<button class="btn" onclick="postPesan()">Posting</button>
+
+</div>
+
+<!-- FEED -->
+<div id="feed"></div>
+
+</div>
+
+<script>
+
+/* 🔥 GANTI URL INI */
+const API_URL = "https://silly-raindrop-76e290.netlify.app/";
+
+/* ======================
+   POST PESAN
+===================== */
+function postPesan(){
+
+const nama=document.getElementById("nama").value;
+const pesan=document.getElementById("pesan").value;
+
+if(!nama || !pesan){
+alert("Isi lengkap!");
+return;
+}
+
+fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({nama,pesan})
+})
+.then(()=>{
+document.getElementById("pesan").value="";
+loadFeed();
+});
+
+}
+
+/* ======================
+   LOAD FEED (SOCIAL STYLE)
+===================== */
+function loadFeed(){
+
+fetch(API_URL)
+.then(res=>res.json())
+.then(data=>{
+
+let feed=document.getElementById("feed");
+feed.innerHTML="";
+
+if(!Array.isArray(data)) return;
+
+data.reverse().forEach((d,i)=>{
+
+feed.innerHTML += `
+<div class="post">
+<b>${d.nama}</b>
+<p>${d.pesan}</p>
+<span class="like" onclick="like(this)">❤️ Like</span>
+</div>
+`;
+
+});
+
+});
+
+}
+
+/* LIKE ANIMATION SIMPLE */
+function like(el){
+el.innerHTML="❤️ Liked";
+el.style.color="red";
+}
+
+/* AUTO LOAD */
+loadFeed();
+setInterval(loadFeed, 4000);
+
+</script>
+
+</body>
+</html>
